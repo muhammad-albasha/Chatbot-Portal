@@ -15,8 +15,7 @@ router.post('/login', async (req, res) => {
 
     const isMatch = user.validatePassword(password);
     if (!isMatch) return res.status(401).json({ message: 'Authentifizierung fehlgeschlagen' });
-
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id.toString(), role: user.role, iat: Date.now(), exp: Date.now() + 3600000}, process.env.JWT_SECRET);
     res.json({ success: true, token });
     console.log("Token:", token);
   } catch (error) {
