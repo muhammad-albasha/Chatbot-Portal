@@ -1,30 +1,24 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-const { hash, compare } = bcrypt;
 
-
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
   username: { type: String, unique: true },
   pwd: String,
-  secret: String,
-  has2FA: { type: Boolean, default: false },
   role: { type: String, default: 'user' },
-  lastLogin: { type: Date, default: Date.now },
+  lastLogin: { type: Date, default: Date.now }
 });
 
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('pwd')) return next();
-        // Hash the password
-    this.pwd = hash(this.pwd, 10);
-    next();
+userSchema.pre('save', async function (next) {
+  if (this.isModified('pwd')) {
+    this.pwd = bcrypt.hash(this.pwd, 10);
+  }
+  next();
 });
 
-userSchema.methods.validatePassword = async function(password) {
-    return await compare(password, this.pwd);
+userSchema.methods.validatePassword = async function (password) {
+  return bcrypt.compare(password, this.pwd);
 };
 
-
-
-export default model('User', userSchema);
+export default mongoose.model('User', userSchema);

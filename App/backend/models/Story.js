@@ -1,8 +1,5 @@
 // models/Story.js
-
 import { Schema, model } from 'mongoose';
-
-
 
 const stepSchema = new Schema({
     intent: String,

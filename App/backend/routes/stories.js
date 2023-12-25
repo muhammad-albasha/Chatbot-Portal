@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
-import Story from '../models/Story';
-import authMiddleware from '../path/to/authMiddleware';
+import Story from '../models/Story.js';
+import authMiddleware from '../routes/authMiddleware.js';
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
@@ -19,3 +19,4 @@ router.get('/', authMiddleware, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+export default router;
