@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import storiesRouter from './routes/stories.js';
+import usersRouter from './routes/users.js';
 
 dotenv.config();
 
@@ -19,5 +20,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/stories', storiesRouter);
+app.use('/api/users', usersRouter);
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

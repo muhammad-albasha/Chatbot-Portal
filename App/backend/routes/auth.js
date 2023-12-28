@@ -1,25 +1,29 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
 
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  console.log("Username:", username);
+
   try {
-    const user = await User.findOne({ $or: [{ username }, { email: username }] })
-    if (!user) return res.status(401).json({ message: 'Authentifizierung fehlgeschlagen' });
+    const user = await User.findOne({ $or: [{ username }, { email: username }] }).select('+pwd');
+    if (!user) {
+      return res.status(401).json({ message: 'Email oder Passwort ist falsch' });
+    }
 
-    if(user) {console.log("User:", user);}
+    const isMatch = await bcrypt.compare(password, user.pwd);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Email oder Passwort ist falsch' });
+    }
 
-    const isMatch = user.validatePassword(password);
-    if (!isMatch) return res.status(401).json({ message: 'Authentifizierung fehlgeschlagen' });
-    const token = jwt.sign({ userId: user._id.toString(), role: user.role, iat: Date.now(), exp: Date.now() + 3600000}, process.env.JWT_SECRET);
-    res.json({ success: true, token });
-    console.log("Token:", token);
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ success: true, token, role: user.role });
   } catch (error) {
-    console.error(error);
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Serverfehler' });
   }
 });

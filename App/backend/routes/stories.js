@@ -30,14 +30,12 @@ router.put('/steps/:stepId', authMiddleware, async (req, res) => {
     const stepUpdates = req.body;
 
     try {
-        // Finden der Story, die den zu aktualisierenden Step enthält
         const story = await Story.findOne({ 'steps._id': stepId, user_id: userId });
 
         if (!story) {
             return res.status(404).json({ message: 'Story nicht gefunden oder Zugriff verweigert' });
         }
 
-        // Aktualisieren des Steps innerhalb der Story
         const step = story.steps.id(stepId);
         if (!step) {
             return res.status(404).json({ message: 'Step nicht gefunden' });
@@ -75,19 +73,5 @@ router.post('/check-intent', authMiddleware, async (req, res) => {
     }
 });
 
-
-router.get('/response/:intent', authMiddleware, async (req, res) => {
-    const { intent } = req.params;
-    try {
-        const response = await Response.findOne({ intent });
-        if (!response) {
-            return res.status(404).json({ message: 'Response nicht gefunden' });
-        }
-        res.json(response);
-    } catch (error) {
-        console.error('Fehler beim Abrufen der Response:', error);
-        res.status(500).json({ message: 'Serverfehler' });
-    }
-});
 
 export default router;
