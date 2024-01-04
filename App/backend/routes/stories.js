@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, response } from 'express';
 const router = Router();
 import Story from '../models/Story.js';
 import Step from '../models/Step.js';
@@ -73,5 +73,24 @@ router.post('/check-intent', authMiddleware, async (req, res) => {
     }
 });
 
+router.get('/response/:intent', authMiddleware, async (req, res) => {
+    const { intent } = req.params;
+
+    try {
+        const response = await Response.find({
+            intent
+        });
+        console.log("🚀 ~ intent:", intent);
+        if (res.status(200)) {
+
+            res.json(response.length > 0 ? response[0] : {});
+            console.log("response:", response);
+        }
+
+    } catch (error) {
+        console.error('Fehler beim Aktualisieren des Steps:', error);
+        res.status(500).json(error);
+    }
+});
 
 export default router;
