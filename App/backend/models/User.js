@@ -7,6 +7,9 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   username: { type: String, unique: true },
   pwd: String,
+  has2FA: { type: Boolean, default: false },
+  secret: String,
+  active: { type: Boolean, default: false },
   role: { type: String, default: 'user' }
 });
 

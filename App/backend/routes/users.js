@@ -32,17 +32,23 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.put('/user/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
-    const { stories, ...userData } = req.body;
+    const { password, ...userData } = req.body;
 
     try {
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            userData.pwd = hashedPassword;
+        }
+
         const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
 
-        res.json(updatedUser);  
+        res.json(updatedUser);
     } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
     }
 });
+
 
 router.post('/user', authMiddleware, async (req, res) => {
     const { _id, ...userData } = req.body;
@@ -58,8 +64,5 @@ router.post('/user', authMiddleware, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
-
-
 
 export default router;
