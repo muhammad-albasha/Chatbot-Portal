@@ -34,7 +34,6 @@ router.put('/user/:id', authMiddleware, async (req, res) => {
     const { stories, ...userData } = req.body;
 
     try {
-        console.log("🚀 ~ userData:", userData);
         const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
 
         res.json(updatedUser);  
@@ -43,6 +42,19 @@ router.put('/user/:id', authMiddleware, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+router.post('/user', authMiddleware, async (req, res) => {
+    const { _id, ...userData } = req.body;
+    try {
+        const newUser = new User(userData);
+        const savedUser = await newUser.save();
+        res.json(savedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
+
 
 
 export default router;
