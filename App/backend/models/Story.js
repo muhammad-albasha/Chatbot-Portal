@@ -2,13 +2,16 @@
 import { Schema, model } from 'mongoose';
 
 const stepSchema = new Schema({
+    _id : Schema.Types.ObjectId,
     intent: String,
     examples: [String],
-    action: String
+    action: String,
+    response_id: { type: Schema.Types.ObjectId, ref: 'Response' },
 });
 
 const storySchema = new Schema({
-    user_id: Schema.Types.ObjectId,
+    _id : Schema.Types.ObjectId,
+    user_id: { type: Schema.Types.ObjectId, ref: 'User' },
     name: String,
     steps: [stepSchema]
 });
