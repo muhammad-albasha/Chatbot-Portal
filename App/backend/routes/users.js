@@ -1,7 +1,8 @@
-import { Router } from 'express';
+import e, { Router } from 'express';
 const router = Router();
 import User from '../models/User.js';
 import authMiddleware from '../routes/authMiddleware.js';
+import bcrypt from 'bcryptjs';
 
 
 router.get('/', authMiddleware, async (req, res) => {
@@ -46,6 +47,9 @@ router.put('/user/:id', authMiddleware, async (req, res) => {
 router.post('/user', authMiddleware, async (req, res) => {
     const { _id, ...userData } = req.body;
     try {
+        if (userData.password) {
+            userData.pwd = await bcrypt.hash(userData.password, 10);
+        }
         const newUser = new User(userData);
         const savedUser = await newUser.save();
         res.json(savedUser);
@@ -54,6 +58,7 @@ router.post('/user', authMiddleware, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
 
 
 
