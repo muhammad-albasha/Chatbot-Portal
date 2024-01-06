@@ -30,12 +30,13 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 router.put('/user/:id', authMiddleware, async (req, res) => {
-    const { _id , name, username, email, role, has2FA, secret, active} = req.body;
-    const updatedData = req.body;
+    const { id } = req.params;
+    const { stories, ...userData } = req.body;
 
     try {
-        // Assuming `User` is your Mongoose model
-        const updatedUser = await User.findByIdAndUpdate(_id, updatedData, { new: true });
+        console.log("🚀 ~ userData:", userData);
+        const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
+
         res.json(updatedUser);  
     } catch (error) {
         console.error(error);
