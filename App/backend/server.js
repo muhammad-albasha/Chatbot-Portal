@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import storiesRouter from './routes/stories.js';
 import usersRouter from './routes/users.js';
-import responsesRouter from './routes/responses.js';
 
 dotenv.config();
 
@@ -21,7 +20,6 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/stories', storiesRouter);
-app.use('/api/responses', responsesRouter);
 app.use('/api/users', usersRouter);
 
 
