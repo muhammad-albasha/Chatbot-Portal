@@ -17,12 +17,12 @@ router.get('/', authMiddleware, async (req, res) => {
             query.has2FA = has2FA;
             query.secret = secret;
             query.active = active;
-            console.log("userId:", userId);
+            // console.log("userId:", userId);
         }
 
         const users = await User.find(query);
         res.json(users);
-        console.log("Users:", users);
+        // console.log("Users:", users);
 
     } catch (error) {
         console.error(`Error fetching users:`, error);

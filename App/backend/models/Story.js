@@ -1,19 +1,11 @@
 // models/Story.js
 import { Schema, model } from 'mongoose';
 
-const stepSchema = new Schema({
-    _id : Schema.Types.ObjectId,
-    intent: String,
-    examples: [String],
-    action: String,
-    response_id: { type: Schema.Types.ObjectId, ref: 'Response' },
-});
-
-const storySchema = new Schema({
-    _id : Schema.Types.ObjectId,
+const storySchema = Schema({
+    _id: Schema.Types.ObjectId,
+    story: String,
     user_id: { type: Schema.Types.ObjectId, ref: 'User' },
-    name: String,
-    steps: [stepSchema]
+    step: { type: Schema.Types.ObjectId, ref: 'Step'},
 });
 
 export default model('Story', storySchema);

@@ -15,14 +15,13 @@ router.get('/', authMiddleware, async (req, res) => {
             query.user_id = userId;
             console.log("userId:", userId);
         }
-
-        const stories = await Story.find(query);
-        res.json(stories);
-        console.log("Stories:", stories);
-    } catch (error) {
-        console.error(`Error fetching stories:`, error);
-        res.status(500).send('Internal Server Error');
-    }
+            const stories = await Story.find(query).populate('step');
+            console.log("🚀 ~ stories:", stories);
+            res.json(stories);
+        } catch (error) {
+            console.error('Error: ', error);
+            res.status(500).send(error);
+        }
 });
 
 router.put('/:storyId/:stepId', authMiddleware, async (req, res) => {
@@ -104,29 +103,6 @@ router.post('/check-intent', authMiddleware, async (req, res) => {
         res.status(500).json(error);
     }
 });
-
-router.get('/response/:intent', authMiddleware, async (req, res) => {
-    const { intent } = req.params;
-
-    try {
-        const response = await Response.find({
-            intent
-        });
-        console.log("🚀 ~ response:", response);
-        console.log("🚀 ~ intent:", intent);
-        if (res.status(200)) {
-
-            res.json(response.length > 0 ? response[0] : {});
-            console.log("response:", response);
-        }
-
-    } catch (error) {
-        console.error('Fehler beim Aktualisieren des Steps:', error);
-        res.status(500).json(error);
-    }
-});
-
-
 
 
 export default router;

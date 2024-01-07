@@ -1,7 +1,7 @@
 // models/Response.js
 import { Schema, model } from 'mongoose';
 
-const responseSchema = new Schema({
+const responseSchema = Schema({
     _id : Schema.Types.ObjectId,
     intent: { type: String, required: true },
     text: { type: String, required: true },
