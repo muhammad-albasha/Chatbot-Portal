@@ -24,4 +24,32 @@ router.get('/:responseId', authMiddleware, async (req, res) => {
     }
 });
 
+// POST eine neue Response
+router.post('/responses', authMiddleware, async (req, res) => {
+    try {
+        const newResponse = new Response({ ...req.body });
+        await newResponse.save();
+        res.status(201).json(newResponse);
+    } catch (error) {
+        console.error('Error creating response', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// PUT eine bestehende Response aktualisieren
+router.put('/responses/:responseId', authMiddleware, async (req, res) => {
+    try {
+        const responseId = req.params.responseId;
+        const response = await Response.findByIdAndUpdate(responseId, req.body, { new: true });
+        if (!response) {
+            return res.status(404).json({ message: 'Response not found' });
+        }
+        res.json(response);
+    } catch (error) {
+        console.error('Error updating response', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 export default router;

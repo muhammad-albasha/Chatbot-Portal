@@ -7,6 +7,7 @@ const stepSchema = Schema({
     examples: [String],
     action: String,
     response_id: { type: Schema.Types.ObjectId, ref: 'Response'},
+    story_id: { type: Schema.Types.ObjectId, ref: 'Story'}
 });
 
 export default model('Step', stepSchema);
