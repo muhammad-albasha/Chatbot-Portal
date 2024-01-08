@@ -4,6 +4,7 @@ import User from '../models/User.js';
 import Story from '../models/Story.js';
 import authMiddleware from '../routes/authMiddleware.js';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 
 
 router.get('/', authMiddleware, async (req, res) => {
@@ -31,6 +32,25 @@ router.get('/', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error(`Error fetching users:`, error);
         res.status(500).send('Internal Server Error');
+    }
+});
+
+router.post('/story', authMiddleware, async (req, res) => {
+    try {
+        const { story } = req.body;
+
+        const newStory = new Story({
+            _id: new mongoose.Types.ObjectId(),
+            story,
+            steps: [],
+        });
+
+        await newStory.save();
+
+        res.status(201).json(newStory);
+    } catch (error) {
+        console.error('Error adding new story:', error);
+        res.status(500).send(error);
     }
 });
 

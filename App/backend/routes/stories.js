@@ -31,7 +31,6 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 });
 
-
 // Route zum checken, ob ein Intent bereits verwendet wird
 router.post('/check-intent', authMiddleware, async (req, res) => {
     const { intent } = req.body;
