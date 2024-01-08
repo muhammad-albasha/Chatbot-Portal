@@ -6,7 +6,7 @@ dotenv.config();
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
-    return res.status(401).json({ message: 'Authentifizierung fehlgeschlagen' });
+    return res.status(401).json({ logout: true, message: "Token fehlt" });
   }
 
   try {
@@ -14,8 +14,9 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Authentifizierung fehlgeschlagen' });
+    res.status(401).json({ logout: true, message: "Token ungültig" });
   }
 };
+
 
 export default authMiddleware;
