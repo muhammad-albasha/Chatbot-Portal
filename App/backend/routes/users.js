@@ -40,7 +40,7 @@ router.put('/user/:id', authMiddleware, async (req, res) => {
 
     if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Zugriff verweigert' });
-      }
+    }
 
     try {
         if (password) {
@@ -49,29 +49,33 @@ router.put('/user/:id', authMiddleware, async (req, res) => {
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         res.json(updatedUser);
-    } catch (error) {
+    } catch(error) {
         console.error(error);
-        res.status(500).send('Server error');
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
 
 router.post('/user', authMiddleware, async (req, res) => {
-    const { _id, ...userData } = req.body;
+    const { ...userData } = req.body;
     try {
         if (userData.password) {
             userData.pwd = await bcrypt.hash(userData.password, 10);
         }
         const newUser = new User(userData);
-        const savedUser = await newUser.save();
-        res.json(savedUser);
+        await newUser.save();
+        res.json(newUser);
     } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
     }
 });
+
 
 router.get('/:userId/stories', authMiddleware, async (req, res) => {
     try {
