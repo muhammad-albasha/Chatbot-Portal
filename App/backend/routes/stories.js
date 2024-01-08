@@ -44,7 +44,7 @@ router.post('/check-intent', authMiddleware, async (req, res) => {
 });
 
 // Route to add a new step
-router.post('/steps', async (req, res) => {
+router.post('/steps', authMiddleware, async (req, res) => {
     try {
         const { storyId, intent, examples, action, text, images, attachments } = req.body;
 
@@ -72,70 +72,22 @@ router.post('/steps', async (req, res) => {
     }
 });
 
-// // POST eine neue Story
-// router.post('/', authMiddleware, async (req, res) => {
-//     try {
-//         const newStory = new Story({ ...req.body });
-//         await newStory.save();
-//         res.status(201).json(newStory);
-//     } catch (error) {
-//         console.error('Error creating story', error);
-//         res.status(500).json({ message: 'Server error' });
-//     }
-// });
+router.put('/steps/:stepId', authMiddleware, async (req, res) => {
+    try {
+        const { stepId } = req.params;
+        const updateData = req.body;
 
-// // PUT eine bestehende Story aktualisieren
-// router.put('/:storyId', authMiddleware, async (req, res) => {
-//     try {
-//         const storyId = req.params.storyId;
-//         const story = await Story.findByIdAndUpdate(storyId, req.body, { new: true });
-//         if (!story) {
-//             return res.status(404).json({ message: 'Story not found' });
-//         }
-//         res.json(story);
-//     } catch (error) {
-//         console.error('Error updating story', error);
-//         res.status(500).json({ message: 'Server error' });
-//     }
-// });
+        // Update the step with the given ID
+        const updatedStep = await Step.findByIdAndUpdate(stepId, updateData, { new: true });
 
-// POST einen neuen Step
-// router.post('/:storyId/steps', authMiddleware, async (req, res) => {
-//     try {
-//         const { storyId } = req.params;
-//         if (!storyId) {
-//             return res.status(400).json({ message: 'Story ID is missing' });
-//         }
+        if (!updatedStep) {
+            return res.status(404).send('Step not found');
+        }
 
-//         const newStep = new Step({
-//             ...req.body,
-//             story: storyId
-//         });
-//         await newStep.save();
-
-//         await Story.findByIdAndUpdate(storyId, { $push: { steps: newStep._id } });
-
-//         res.status(201).json(newStep);
-//     } catch (error) {
-//         console.error('Error creating step', error);
-//         res.status(500).json({ message: 'Server error' });
-//     }
-// });
-
-
-// // PUT einen bestehenden Step aktualisieren
-// router.put('/:storyId/steps/:stepId', authMiddleware, async (req, res) => {
-//     try {
-//         const stepId = req.params.stepId;
-//         const step = await Step.findByIdAndUpdate(stepId, req.body, { new: true });
-//         if (!step) {
-//             return res.status(404).json({ message: 'Step not found' });
-//         }
-//         res.json(step);
-//     } catch (error) {
-//         console.error('Error updating step', error);
-//         res.status(500).json({ message: 'Server error' });
-//     }
-// });
-
+        res.status(200).json(updatedStep);
+    } catch (error) {
+        console.error('Error updating step:', error);
+        res.status(500).send(error);
+    }
+});
 export default router;
