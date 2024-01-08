@@ -2,6 +2,7 @@ import { Router, response } from 'express';
 const router = Router();
 import Story from '../models/Story.js';
 import Step from '../models/Step.js';
+import User from '../models/User.js';
 import authMiddleware from '../routes/authMiddleware.js';
 import mongoose from 'mongoose';
 
@@ -9,18 +10,25 @@ import mongoose from 'mongoose';
 router.get('/', authMiddleware, async (req, res) => {
     try {
         const { userId, role } = req.user;
-        let query = {};
-        if (role !== 'admin') {
-            query.user_id = userId;
-            console.log("userId:", userId);
+        
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Benutzer nicht gefunden' });
         }
-            const stories = await Story.find(query).populate('steps');
-            console.log("🚀 ~ stories:", stories);
-            res.json(stories);
-        } catch (error) {
-            console.error('Error: ', error);
-            res.status(500).send(error);
+
+        let stories;
+        if (role === 'admin') {
+            stories = await Story.find().populate('steps');
+        } else {
+            stories = await Story.find({ '_id': { $in: user.stories } }).populate('steps');
         }
+
+        console.log("🚀 ~ stories:", stories);
+        res.json(stories);
+    } catch (error) {
+        console.error('Error: ', error);
+        res.status(500).send(error);
+    }
 });
 
 
