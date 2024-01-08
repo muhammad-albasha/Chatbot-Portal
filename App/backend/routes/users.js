@@ -7,6 +7,9 @@ import bcrypt from 'bcryptjs';
 
 
 router.get('/', authMiddleware, async (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Zugriff verweigert' });
+      }
     try {
         const { name, userId, username, email, role, has2FA, secret, active} = req.user;
         let query = {};
@@ -34,6 +37,10 @@ router.get('/', authMiddleware, async (req, res) => {
 router.put('/user/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { password, ...userData } = req.body;
+
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Zugriff verweigert' });
+      }
 
     try {
         if (password) {
