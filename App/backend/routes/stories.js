@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const { userId, role, iat, exp } = req.user;
+        const { userId, role } = req.user;
         let query = {};
         if (role !== 'admin') {
             query.user_id = userId;
@@ -24,6 +24,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 
+// Route zum checken, ob ein Intent bereits verwendet wird
 router.post('/check-intent', authMiddleware, async (req, res) => {
     const { intent } = req.body;
 
@@ -43,12 +44,12 @@ router.post('/check-intent', authMiddleware, async (req, res) => {
     }
 });
 
-// Route to add a new step
+// Route zum Erstellen einer neuen step
 router.post('/steps', authMiddleware, async (req, res) => {
     try {
         const { storyId, intent, examples, action, text, images, attachments } = req.body;
 
-        // Create a new step
+        // erstelle ein neues Step-Objekt
         const newStep = new Step({
             _id: new mongoose.Types.ObjectId(),
             intent,
@@ -59,10 +60,10 @@ router.post('/steps', authMiddleware, async (req, res) => {
             attachments
         });
 
-        // Save the new step
+        // Speichere das neue Step-Objekt in der Datenbank
         await newStep.save();
 
-        // Find the story and update it by pushing the new step's ID into its steps array
+        // Finde die Story mit der ID storyId und füge die ID des neuen Steps in das Array steps ein
         await Story.findByIdAndUpdate(storyId, { $push: { steps: newStep._id } });
 
         res.status(201).json(newStep);
@@ -72,12 +73,13 @@ router.post('/steps', authMiddleware, async (req, res) => {
     }
 });
 
+// Route zum Aktualisieren eines Steps
 router.put('/steps/:stepId', authMiddleware, async (req, res) => {
     try {
         const { stepId } = req.params;
         const updateData = req.body;
 
-        // Update the step with the given ID
+        // Update die Step-Daten
         const updatedStep = await Step.findByIdAndUpdate(stepId, updateData, { new: true });
 
         if (!updatedStep) {

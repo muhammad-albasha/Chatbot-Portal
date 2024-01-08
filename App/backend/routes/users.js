@@ -1,6 +1,7 @@
 import e, { Router } from 'express';
 const router = Router();
 import User from '../models/User.js';
+import Story from '../models/Story.js';
 import authMiddleware from '../routes/authMiddleware.js';
 import bcrypt from 'bcryptjs';
 
@@ -62,6 +63,28 @@ router.post('/user', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Server error');
+    }
+});
+
+router.get('/:userId/stories', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        
+        // Find the user by ID
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Assuming 'stories' field in User model contains an array of Story IDs
+        const stories = await Story.find({ '_id': { $in: user.stories } });
+        console.log("user_stories:", stories);
+
+        res.json(stories);
+    } catch (error) {
+        console.error('Error fetching user stories:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 

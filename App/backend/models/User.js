@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
   has2FA: { type: Boolean, default: false },
   secret: String,
   active: { type: Boolean, default: false },
-  role: { type: String, default: 'user' }
+  role: { type: String, default: 'user' },
+  stories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
 });
 
 userSchema.pre('save', async function (next) {
