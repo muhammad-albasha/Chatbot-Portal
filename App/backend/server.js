@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import storiesRouter from './routes/stories.js';
 import usersRouter from './routes/users.js';
+import chatbotRouter from './routes/chatbot.js';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/stories', storiesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/chatbot', chatbotRouter);
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
